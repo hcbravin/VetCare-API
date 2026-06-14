@@ -1,0 +1,1013 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "VetCare API",
+    "version": "1.0.0",
+    "description": "API RESTful para gerenciamento de atendimentos veterinários com autenticação JWT"
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "securityDefinitions": {
+    "BearerAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "Informe o token JWT no formato: Bearer <token>"
+    }
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "tags": [
+          "Index"
+        ],
+        "summary": "Informações sobre a API VetCare",
+        "description": "Retorna dados gerais do serviço como nome, versão, status e link para documentação",
+        "responses": {
+          "200": {
+            "description": "Informações obtidas com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nome": {
+                  "type": "string",
+                  "example": "VetCare API"
+                },
+                "descricao": {
+                  "type": "string",
+                  "example": "API RESTful para gerenciamento de atendimentos veterinários"
+                },
+                "versao": {
+                  "type": "string",
+                  "example": "1.0.0"
+                },
+                "tecnologias": {
+                  "type": "array",
+                  "example": [
+                    "Node.js",
+                    "Express",
+                    "Sequelize",
+                    "MySQL",
+                    "JWT"
+                  ],
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "status": {
+                  "type": "string",
+                  "example": "online"
+                },
+                "timestamp": {
+                  "type": "string",
+                  "example": "2026-06-14 14:30:00"
+                },
+                "documentacao": {
+                  "type": "string",
+                  "example": "/api-docs"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/usuarios/cadastro": {
+      "post": {
+        "tags": [
+          "Usuários"
+        ],
+        "summary": "Cadastra um novo usuário",
+        "description": "Cria uma nova conta de usuário no sistema. O perfil é opcional (padrão: recepcao)",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "Dados para cadastro do usuário",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nome": {
+                  "type": "string",
+                  "example": "João Silva"
+                },
+                "usuario": {
+                  "type": "string",
+                  "example": "joao.silva"
+                },
+                "senha": {
+                  "type": "string",
+                  "example": "senha123"
+                },
+                "perfil": {
+                  "type": "string",
+                  "example": "recepcao"
+                }
+              },
+              "required": [
+                "nome",
+                "usuario",
+                "senha"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Usuário criado com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "example": 1
+                },
+                "nome": {
+                  "type": "string",
+                  "example": "João Silva"
+                },
+                "usuario": {
+                  "type": "string",
+                  "example": "joao.silva"
+                },
+                "perfil": {
+                  "type": "string",
+                  "example": "recepcao"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos (campo obrigatório faltando, senha menor que 6 caracteres, usuário já existe)"
+          },
+          "500": {
+            "description": "Erro interno do servidor"
+          }
+        }
+      }
+    },
+    "/api/usuarios/login": {
+      "post": {
+        "tags": [
+          "Usuários"
+        ],
+        "summary": "Realiza login do usuário",
+        "description": "Autentica o usuário e retorna um token JWT válido por 24 horas",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "Credenciais do usuário",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "usuario": {
+                  "type": "string",
+                  "example": "joao.silva"
+                },
+                "senha": {
+                  "type": "string",
+                  "example": "senha123"
+                }
+              },
+              "required": [
+                "usuario",
+                "senha"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login realizado com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": "string",
+                  "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                },
+                "usuario": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "nome": {
+                      "type": "string",
+                      "example": "João Silva"
+                    },
+                    "usuario": {
+                      "type": "string",
+                      "example": "joao.silva"
+                    },
+                    "perfil": {
+                      "type": "string",
+                      "example": "recepcao"
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Usuário e senha são obrigatórios"
+          },
+          "401": {
+            "description": "Usuário ou senha inválidos"
+          },
+          "500": {
+            "description": "Erro interno do servidor"
+          }
+        }
+      }
+    },
+    "/api/pets/": {
+      "post": {
+        "tags": [
+          "Pets"
+        ],
+        "summary": "Cadastra um novo pet",
+        "description": "Adiciona um novo pet ao sistema. Requer autenticação e perfil de administrador.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "Dados do pet",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nome": {
+                  "type": "string",
+                  "example": "Rex"
+                },
+                "especie": {
+                  "type": "string",
+                  "example": "cachorro"
+                }
+              },
+              "required": [
+                "nome",
+                "especie"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Pet criado com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "example": 1
+                },
+                "nome": {
+                  "type": "string",
+                  "example": "Rex"
+                },
+                "especie": {
+                  "type": "string",
+                  "example": "cachorro"
+                },
+                "criada_em": {
+                  "type": "string",
+                  "example": "2026-06-14T14:30:00.000Z"
+                },
+                "atualizada_em": {
+                  "type": "string",
+                  "example": "2026-06-14T14:30:00.000Z"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos (nome ou espécie obrigatórios)"
+          },
+          "401": {
+            "description": "Não autenticado - Token ausente ou inválido"
+          },
+          "403": {
+            "description": "Acesso negado - Apenas administradores podem cadastrar pets"
+          },
+          "500": {
+            "description": "Erro interno do servidor"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Pets"
+        ],
+        "summary": "Lista todos os pets",
+        "description": "Retorna a lista completa de pets cadastrados, com opção de filtro por espécie. Requer autenticação e perfil de recepção.",
+        "parameters": [
+          {
+            "name": "especie",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Filtra pets por espécie (ex: ?especie=cachorro)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de pets obtida com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "array"
+                },
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "nome": {
+                      "type": "string",
+                      "example": "Rex"
+                    },
+                    "especie": {
+                      "type": "string",
+                      "example": "cachorro"
+                    },
+                    "criada_em": {
+                      "type": "string",
+                      "example": "2026-06-14T14:30:00.000Z"
+                    },
+                    "atualizada_em": {
+                      "type": "string",
+                      "example": "2026-06-14T14:30:00.000Z"
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "401": {
+            "description": "Não autenticado - Token ausente ou inválido"
+          },
+          "403": {
+            "description": "Acesso negado - Apenas recepção pode listar pets"
+          },
+          "500": {
+            "description": "Erro interno do servidor"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/atendimentos/": {
+      "post": {
+        "tags": [
+          "Atendimentos"
+        ],
+        "summary": "Cadastra um novo atendimento",
+        "description": "Agenda um novo atendimento para um pet. Requer autenticação e perfil de recepção.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "Dados do atendimento",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data_hora": {
+                  "type": "string",
+                  "example": "2026-06-15T14:30:00.000Z"
+                },
+                "motivo": {
+                  "type": "string",
+                  "example": "Consulta de rotina"
+                },
+                "pet_id": {
+                  "type": "number",
+                  "example": 1
+                },
+                "usuario_id": {
+                  "type": "number",
+                  "example": 1
+                }
+              },
+              "required": [
+                "data_hora",
+                "motivo",
+                "pet_id",
+                "usuario_id"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Atendimento criado com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "example": 1
+                },
+                "data_hora": {
+                  "type": "string",
+                  "example": "2026-06-15T14:30:00.000Z"
+                },
+                "motivo": {
+                  "type": "string",
+                  "example": "Consulta de rotina"
+                },
+                "status": {
+                  "type": "string",
+                  "example": "agendado"
+                },
+                "pet_id": {
+                  "type": "number",
+                  "example": 1
+                },
+                "usuario_id": {
+                  "type": "number",
+                  "example": 1
+                },
+                "criada_em": {
+                  "type": "string",
+                  "example": "2026-06-14T14:30:00.000Z"
+                },
+                "atualizada_em": {
+                  "type": "string",
+                  "example": "2026-06-14T14:30:00.000Z"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos (campo obrigatório faltando)"
+          },
+          "401": {
+            "description": "Não autenticado - Token ausente ou inválido"
+          },
+          "403": {
+            "description": "Acesso negado - Apenas recepção pode cadastrar atendimentos"
+          },
+          "404": {
+            "description": "Pet não encontrado"
+          },
+          "500": {
+            "description": "Erro interno do servidor"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/atendimentos/{id}": {
+      "get": {
+        "tags": [
+          "Atendimentos"
+        ],
+        "summary": "Consulta atendimento por ID",
+        "description": "Retorna os detalhes de um atendimento específico, incluindo os dados completos do pet associado. Requer autenticação e perfil de recepção.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID do atendimento"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Atendimento encontrado com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "example": 1
+                },
+                "data_hora": {
+                  "type": "string",
+                  "example": "2026-06-15T14:30:00.000Z"
+                },
+                "motivo": {
+                  "type": "string",
+                  "example": "Consulta de rotina"
+                },
+                "status": {
+                  "type": "string",
+                  "example": "agendado"
+                },
+                "pet_id": {
+                  "type": "number",
+                  "example": 1
+                },
+                "usuario_id": {
+                  "type": "number",
+                  "example": 1
+                },
+                "criada_em": {
+                  "type": "string",
+                  "example": "2026-06-14T14:30:00.000Z"
+                },
+                "atualizada_em": {
+                  "type": "string",
+                  "example": "2026-06-14T14:30:00.000Z"
+                },
+                "Pet": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "nome": {
+                      "type": "string",
+                      "example": "Rex"
+                    },
+                    "especie": {
+                      "type": "string",
+                      "example": "cachorro"
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "ID inválido"
+          },
+          "401": {
+            "description": "Não autenticado - Token ausente ou inválido"
+          },
+          "403": {
+            "description": "Acesso negado - Apenas recepção pode consultar atendimentos"
+          },
+          "404": {
+            "description": "Atendimento não encontrado"
+          },
+          "500": {
+            "description": "Erro interno do servidor"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/atendimentos/{id}/iniciar": {
+      "put": {
+        "tags": [
+          "Atendimentos"
+        ],
+        "summary": "Inicia um atendimento",
+        "description": "Altera o status do atendimento para \"em_atendimento\". Requer autenticação e perfil de veterinário.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID do atendimento"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Atendimento iniciado com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "example": 1
+                },
+                "data_hora": {
+                  "type": "string",
+                  "example": "2026-06-15T14:30:00.000Z"
+                },
+                "motivo": {
+                  "type": "string",
+                  "example": "Consulta de rotina"
+                },
+                "status": {
+                  "type": "string",
+                  "example": "em_atendimento"
+                },
+                "pet_id": {
+                  "type": "number",
+                  "example": 1
+                },
+                "usuario_id": {
+                  "type": "number",
+                  "example": 1
+                },
+                "criada_em": {
+                  "type": "string",
+                  "example": "2026-06-14T14:30:00.000Z"
+                },
+                "atualizada_em": {
+                  "type": "string",
+                  "example": "2026-06-14T14:30:00.000Z"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "ID inválido ou atendimento já em andamento ou já finalizado"
+          },
+          "401": {
+            "description": "Não autenticado - Token ausente ou inválido"
+          },
+          "403": {
+            "description": "Acesso negado - Apenas veterinários podem iniciar atendimentos"
+          },
+          "404": {
+            "description": "Atendimento não encontrado"
+          },
+          "500": {
+            "description": "Erro interno do servidor"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/atendimentos/{id}/finalizar": {
+      "put": {
+        "tags": [
+          "Atendimentos"
+        ],
+        "summary": "Finaliza um atendimento",
+        "description": "Altera o status do atendimento para \"finalizado\". Requer autenticação e perfil de veterinário.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID do atendimento"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Atendimento finalizado com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "example": 1
+                },
+                "data_hora": {
+                  "type": "string",
+                  "example": "2026-06-15T14:30:00.000Z"
+                },
+                "motivo": {
+                  "type": "string",
+                  "example": "Consulta de rotina"
+                },
+                "status": {
+                  "type": "string",
+                  "example": "finalizado"
+                },
+                "pet_id": {
+                  "type": "number",
+                  "example": 1
+                },
+                "usuario_id": {
+                  "type": "number",
+                  "example": 1
+                },
+                "criada_em": {
+                  "type": "string",
+                  "example": "2026-06-14T14:30:00.000Z"
+                },
+                "atualizada_em": {
+                  "type": "string",
+                  "example": "2026-06-14T14:30:00.000Z"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "ID inválido ou atendimento já finalizado"
+          },
+          "401": {
+            "description": "Não autenticado - Token ausente ou inválido"
+          },
+          "403": {
+            "description": "Acesso negado - Apenas veterinários podem finalizar atendimentos"
+          },
+          "404": {
+            "description": "Atendimento não encontrado"
+          },
+          "500": {
+            "description": "Erro interno do servidor"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "Usuario": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number",
+          "example": 1
+        },
+        "nome": {
+          "type": "string",
+          "example": "João Silva"
+        },
+        "usuario": {
+          "type": "string",
+          "example": "joao.silva"
+        },
+        "perfil": {
+          "type": "string",
+          "example": "recepcao"
+        }
+      }
+    },
+    "NovoUsuario": {
+      "type": "object",
+      "properties": {
+        "nome": {
+          "type": "string",
+          "example": "João Silva"
+        },
+        "usuario": {
+          "type": "string",
+          "example": "joao.silva"
+        },
+        "senha": {
+          "type": "string",
+          "example": "senha123"
+        },
+        "perfil": {
+          "type": "string",
+          "example": "recepcao"
+        }
+      }
+    },
+    "Login": {
+      "type": "object",
+      "properties": {
+        "usuario": {
+          "type": "string",
+          "example": "joao.silva"
+        },
+        "senha": {
+          "type": "string",
+          "example": "senha123"
+        }
+      }
+    },
+    "LoginResposta": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "example": "eyJhbGciOiJIUzI1NiIs..."
+        },
+        "usuario": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "number",
+              "example": 1
+            },
+            "nome": {
+              "type": "string",
+              "example": "João Silva"
+            },
+            "usuario": {
+              "type": "string",
+              "example": "joao.silva"
+            },
+            "perfil": {
+              "type": "string",
+              "example": "recepcao"
+            }
+          }
+        }
+      }
+    },
+    "Pet": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number",
+          "example": 1
+        },
+        "nome": {
+          "type": "string",
+          "example": "Rex"
+        },
+        "especie": {
+          "type": "string",
+          "example": "cachorro"
+        },
+        "criada_em": {
+          "type": "string",
+          "example": "2026-06-14T10:00:00.000Z"
+        },
+        "atualizada_em": {
+          "type": "string",
+          "example": "2026-06-14T10:00:00.000Z"
+        }
+      }
+    },
+    "Atendimento": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number",
+          "example": 1
+        },
+        "data_hora": {
+          "type": "string",
+          "example": "2026-06-15T14:30:00.000Z"
+        },
+        "motivo": {
+          "type": "string",
+          "example": "Consulta de rotina"
+        },
+        "status": {
+          "type": "string",
+          "example": "agendado"
+        },
+        "pet_id": {
+          "type": "number",
+          "example": 1
+        },
+        "usuario_id": {
+          "type": "number",
+          "example": 1
+        },
+        "criada_em": {
+          "type": "string",
+          "example": "2026-06-14T10:00:00.000Z"
+        },
+        "atualizada_em": {
+          "type": "string",
+          "example": "2026-06-14T10:00:00.000Z"
+        },
+        "Pet": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "number",
+              "example": 1
+            },
+            "nome": {
+              "type": "string",
+              "example": "Rex"
+            },
+            "especie": {
+              "type": "string",
+              "example": "cachorro"
+            }
+          }
+        }
+      }
+    },
+    "AtendimentoCompleto": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number",
+          "example": 1
+        },
+        "data_hora": {
+          "type": "string",
+          "example": "2026-06-15T14:30:00.000Z"
+        },
+        "motivo": {
+          "type": "string",
+          "example": "Consulta de rotina"
+        },
+        "status": {
+          "type": "string",
+          "example": "agendado"
+        },
+        "pet_id": {
+          "type": "number",
+          "example": 1
+        },
+        "usuario_id": {
+          "type": "number",
+          "example": 1
+        },
+        "criada_em": {
+          "type": "string",
+          "example": "2026-06-14T10:00:00.000Z"
+        },
+        "atualizada_em": {
+          "type": "string",
+          "example": "2026-06-14T10:00:00.000Z"
+        },
+        "Pet": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "number",
+              "example": 1
+            },
+            "nome": {
+              "type": "string",
+              "example": "Rex"
+            },
+            "especie": {
+              "type": "string",
+              "example": "cachorro"
+            }
+          }
+        }
+      }
+    },
+    "NovoAtendimento": {
+      "type": "object",
+      "properties": {
+        "data_hora": {
+          "type": "string",
+          "example": "2026-06-15T14:30:00.000Z"
+        },
+        "motivo": {
+          "type": "string",
+          "example": "Consulta de rotina"
+        },
+        "pet_id": {
+          "type": "number",
+          "example": 1
+        },
+        "usuario_id": {
+          "type": "number",
+          "example": 1
+        }
+      }
+    }
+  }
+}
