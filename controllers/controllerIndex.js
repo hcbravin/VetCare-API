@@ -6,7 +6,8 @@ exports.index = async function (req, res) {
         tecnologias: ["Node.js", "Express", "Sequelize", "MySQL", "JWT"],
         status: "online",
         timestamp: new Date().toLocaleString(),
-        documentacao: "/api-docs"
+        documentacao: "/api-docs",
+        desenvolvedor: "Henrique Casagrande Bravin"
     };
     // Configuração: não usar cache (no-store)
     res.set('Cache-Control', 'no-store');
