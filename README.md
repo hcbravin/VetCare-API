@@ -2,29 +2,6 @@
 
 API RESTful para gerenciamento de atendimentos veterinários. Desenvolvida como avaliação prática da disciplina Desenvolvimento Back-end II.
 
-## 📋 Índice
-
-- [Sobre o Projeto](#sobre-o-projeto)
-- [Tecnologias Utilizadas](#tecnologias-utilizadas)
-- [Pré-requisitos](#pré-requisitos)
-- [Instalação e Configuração](#instalação-e-configuração)
-- [Configuração do Banco de Dados](#configuração-do-banco-de-dados)
-- [Variáveis de Ambiente](#variáveis-de-ambiente)
-- [Executando o Projeto](#executando-o-projeto)
-- [Endpoints da API](#endpoints-da-api)
-  - [Informações do Serviço](#informações-do-serviço)
-  - [Usuários](#usuários)
-  - [Pets](#pets)
-  - [Atendimentos](#atendimentos)
-- [Autenticação e Autorização](#autenticação-e-autorização)
-- [Cache HTTP](#cache-http)
-- [Segurança](#segurança)
-- [Documentação Swagger](#documentação-swagger)
-- [Testes](#testes)
-- [Implantaçao](#implantação)
-- [Autor](#autor)
-
----
 
 ## Sobre o Projeto
 
@@ -70,3 +47,4 @@ Antes de começar, certifique-se de ter instalado em sua máquina:
 ## Demonstração
 
 Sistema demonstrativo disponível em https://ifmg-backendii-vetcare.alwaysdata.net/api-docs (Acesso em 14/06/2026)
+
